@@ -1,0 +1,194 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  height: 100%;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease, min-width 0.2s ease;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.collapsed .sidebar {
+  width: 60px;
+  min-width: 60px;
+}
+
+.sidebarTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px 12px;
+  border-bottom: 1px solid var(--border);
+  min-height: 62px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.brandMark {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(92,106,196,0.25);
+}
+
+.brandText { overflow: hidden; white-space: nowrap; }
+.brandTitle { font-family: var(--font-serif); font-size: 14px; color: var(--text-primary); }
+.brandSub { font-size: 9px; color: var(--text-muted); letter-spacing: 0.1em; margin-top: 1px; }
+
+.collapseBtn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+.collapseBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Nav ── */
+.nav {
+  flex: 1;
+  padding: 10px 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  transition: background 0.12s, color 0.12s;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.navItem:hover { background: var(--surface-2); color: var(--text-primary); }
+.navItemActive { background: var(--accent-dim) !important; color: var(--accent) !important; }
+.navItemSoon { opacity: 0.5; pointer-events: none; }
+
+.navIcon { display: flex; align-items: center; min-width: 16px; }
+.navLabel { display: flex; align-items: center; gap: 6px; }
+
+.soonBadge {
+  font-size: 8px;
+  background: var(--surface-3);
+  color: var(--text-muted);
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+}
+
+/* ── Sidebar bottom ── */
+.sidebarBottom {
+  border-top: 1px solid var(--border);
+  padding: 10px 8px;
+}
+
+.userCard {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.userCard:hover { background: var(--surface-2); }
+
+.userAvatar {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  color: #fff;
+}
+
+.userInfo { overflow: hidden; }
+.userName  { font-size: 11px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.userEmail { font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.logoutBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.logoutBtn:hover { background: #fef2f2; color: #dc2626; }
+
+/* ── Main ── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Coming soon ── */
+.comingSoon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 400px;
+  gap: 12px;
+  color: var(--text-muted);
+}
+.comingSoonIcon { font-size: 48px; }
+.comingSoon h2 { font-family: var(--font-serif); font-weight: 400; color: var(--text-secondary); }
+.comingSoon p  { font-size: 13px; }

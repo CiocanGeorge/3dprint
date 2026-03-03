@@ -1,0 +1,64 @@
+.page { min-height: 100vh; background: var(--bg); }
+.nav {
+  height: 56px; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; position: sticky; top: 0; z-index: 10;
+}
+.navTitle { font-family: var(--font-serif); font-size: 15px; color: var(--text-primary); }
+.backBtn {
+  display: flex; align-items: center; gap: 6px; background: none;
+  border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 11px; padding: 5px 12px; cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.backBtn:hover { border-color: var(--accent); color: var(--accent); }
+.logoutBtn {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+  background: none; border: none; cursor: pointer; padding: 4px 8px;
+}
+.logoutBtn:hover { color: #dc2626; }
+.content { max-width: 520px; margin: 40px auto; padding: 0 24px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 28px; box-shadow: var(--shadow-sm); margin-bottom: 16px;
+}
+.avatarSection { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+.avatar {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 22px; color: #fff; font-weight: 500;
+  flex-shrink: 0;
+}
+.avatarName { font-family: var(--font-serif); font-size: 18px; color: var(--text-primary); }
+.avatarMeta { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.form { display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.label { font-size: 11px; color: var(--text-secondary); }
+.input {
+  padding: 10px 12px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 8px;
+  font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); background: var(--surface); }
+.input:disabled { opacity: 0.5; cursor: not-allowed; }
+.fieldNote { font-size: 10px; color: var(--text-muted); }
+.saveBtn {
+  height: 42px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; border: none; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px; margin-top: 4px;
+  transition: opacity 0.15s; box-shadow: 0 2px 8px rgba(92,106,196,0.3);
+}
+.saveBtn:hover { opacity: 0.9; }
+.alert { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 12px; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; }
+.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; font-size: 12px; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; }
+.dangerCard { background: var(--surface); border: 1px solid #fecaca; border-radius: 12px; padding: 20px; }
+.dangerTitle { font-size: 12px; color: #dc2626; margin-bottom: 12px; letter-spacing: 0.08em; }
+.logoutBtnFull {
+  width: 100%; height: 38px; background: none; border: 1px solid #fecaca;
+  border-radius: 8px; color: #dc2626; font-family: var(--font-mono); font-size: 11px;
+  cursor: pointer; transition: background 0.15s;
+}
+.logoutBtnFull:hover { background: #fef2f2; }

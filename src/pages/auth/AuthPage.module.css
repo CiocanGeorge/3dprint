@@ -1,0 +1,113 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+}
+
+.logo { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+.logoMark {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 26px; color: #fff;
+  box-shadow: 0 3px 10px rgba(92,106,196,0.3);
+  flex-shrink: 0;
+}
+.logoTitle { font-family: var(--font-serif); font-size: 16px; color: var(--text-primary); }
+.logoSub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+.alert {
+  display: flex; align-items: center; gap: 8px;
+  background: #fef2f2; border: 1px solid #fecaca;
+  color: #dc2626; font-size: 12px; padding: 10px 12px;
+  border-radius: 8px; margin-bottom: 16px;
+}
+
+.googleBtn {
+  width: 100%; height: 42px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-primary);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  margin-bottom: 16px;
+}
+.googleBtn:hover { border-color: var(--border-hover); box-shadow: var(--shadow-sm); }
+
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px; color: var(--text-muted); font-size: 11px;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.form { display: flex; flex-direction: column; gap: 16px; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.label { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.02em; }
+.labelRow { display: flex; justify-content: space-between; align-items: center; }
+.forgotLink { font-size: 11px; color: var(--accent); text-decoration: none; }
+.forgotLink:hover { text-decoration: underline; }
+
+.inputWrap { position: relative; }
+.input {
+  width: 100%; padding: 10px 12px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 8px; font-family: var(--font-mono); font-size: 13px;
+  color: var(--text-primary); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); background: var(--surface); }
+.input::placeholder { color: var(--text-muted); }
+.eyeBtn {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 14px; line-height: 1;
+  color: var(--text-muted); padding: 2px;
+}
+
+.strengthBar {
+  display: flex; align-items: center; gap: 4px; margin-top: 6px;
+}
+.strengthSegment { flex: 1; height: 3px; border-radius: 2px; transition: background 0.2s; }
+
+.submitBtn {
+  width: 100%; height: 44px; margin-top: 4px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; border: none; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 3px 10px rgba(92,106,196,0.3);
+}
+.submitBtn:hover { opacity: 0.9; box-shadow: 0 4px 16px rgba(92,106,196,0.4); }
+.submitBtn:active { transform: scale(0.98); }
+.submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.switchText { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted); }
+.switchLink { color: var(--accent); text-decoration: none; font-weight: 500; }
+.switchLink:hover { text-decoration: underline; }
+
+.forgotDesc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+
+.successBox { text-align: center; }
+.successIcon {
+  width: 52px; height: 52px; margin: 0 auto 16px;
+  background: #dcfce7; color: #16a34a;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: bold;
+}

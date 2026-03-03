@@ -1,0 +1,12 @@
+/* App.module.css — păstrat pentru compatibilitate */
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+.viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
