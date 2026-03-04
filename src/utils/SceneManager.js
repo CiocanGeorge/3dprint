@@ -1,51 +1,132 @@
-import * as THREE from 'three';
-import { OrbitControls }        from 'three/addons/controls/OrbitControls.js';
-import { TextGeometry }         from 'three/addons/geometries/TextGeometry.js';
-import { FontLoader }           from 'three/addons/loaders/FontLoader.js';
-import { STLExporter }          from 'three/addons/exporters/STLExporter.js';
-import { mergeGeometries }      from 'three/addons/utils/BufferGeometryUtils.js';
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { STLExporter } from "three/addons/exporters/STLExporter.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import { ADDITION, SUBTRACTION, Evaluator, Brush } from "three-bvh-csg";
 
 // ─── Font catalog ─────────────────────────────────────────────────────────────
 export const FONTS = {
   monogram: [
-    { id: 'optimer_bold',       label: 'Optimer Bold',        url: 'https://threejs.org/examples/fonts/optimer_bold.typeface.json' },
-    { id: 'optimer_regular',    label: 'Optimer Regular',     url: 'https://threejs.org/examples/fonts/optimer_regular.typeface.json' },
-    { id: 'gentilis_bold',      label: 'Gentilis Bold',       url: 'https://threejs.org/examples/fonts/gentilis_bold.typeface.json' },
-    { id: 'gentilis_regular',   label: 'Gentilis Regular',    url: 'https://threejs.org/examples/fonts/gentilis_regular.typeface.json' },
-    { id: 'helvetiker_bold',    label: 'Helvetiker Bold',     url: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json' },
-    { id: 'helvetiker_regular', label: 'Helvetiker Regular',  url: 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json' },
-    { id: 'droid_serif_bold',   label: 'Droid Serif Bold',    url: 'https://threejs.org/examples/fonts/droid/droid_serif_bold.typeface.json' },
-    { id: 'droid_serif_regular',label: 'Droid Serif Regular', url: 'https://threejs.org/examples/fonts/droid/droid_serif_regular.typeface.json' },
-    { id: 'droid_sans_bold',    label: 'Droid Sans Bold',     url: 'https://threejs.org/examples/fonts/droid/droid_sans_bold.typeface.json' },
-    { id: 'droid_sans_regular', label: 'Droid Sans Regular',  url: 'https://threejs.org/examples/fonts/droid/droid_sans_regular.typeface.json' },
+    {
+      id: "optimer_bold",
+      label: "Optimer Bold",
+      url: "https://threejs.org/examples/fonts/optimer_bold.typeface.json",
+    },
+    {
+      id: "optimer_regular",
+      label: "Optimer Regular",
+      url: "https://threejs.org/examples/fonts/optimer_regular.typeface.json",
+    },
+    {
+      id: "gentilis_bold",
+      label: "Gentilis Bold",
+      url: "https://threejs.org/examples/fonts/gentilis_bold.typeface.json",
+    },
+    {
+      id: "gentilis_regular",
+      label: "Gentilis Regular",
+      url: "https://threejs.org/examples/fonts/gentilis_regular.typeface.json",
+    },
+    {
+      id: "helvetiker_bold",
+      label: "Helvetiker Bold",
+      url: "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
+    },
+    {
+      id: "helvetiker_regular",
+      label: "Helvetiker Regular",
+      url: "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
+    },
+    {
+      id: "droid_serif_bold",
+      label: "Droid Serif Bold",
+      url: "https://threejs.org/examples/fonts/droid/droid_serif_bold.typeface.json",
+    },
+    {
+      id: "droid_serif_regular",
+      label: "Droid Serif Regular",
+      url: "https://threejs.org/examples/fonts/droid/droid_serif_regular.typeface.json",
+    },
+    {
+      id: "droid_sans_bold",
+      label: "Droid Sans Bold",
+      url: "https://threejs.org/examples/fonts/droid/droid_sans_bold.typeface.json",
+    },
+    {
+      id: "droid_sans_regular",
+      label: "Droid Sans Regular",
+      url: "https://threejs.org/examples/fonts/droid/droid_sans_regular.typeface.json",
+    },
   ],
   name: [
-    { id: 'helvetiker_regular', label: 'Helvetiker Regular',  url: 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json' },
-    { id: 'helvetiker_bold',    label: 'Helvetiker Bold',     url: 'https://threejs.org/examples/fonts/helvetiker_bold.typeface.json' },
-    { id: 'gentilis_regular',   label: 'Gentilis Regular',    url: 'https://threejs.org/examples/fonts/gentilis_regular.typeface.json' },
-    { id: 'gentilis_bold',      label: 'Gentilis Bold',       url: 'https://threejs.org/examples/fonts/gentilis_bold.typeface.json' },
-    { id: 'optimer_regular',    label: 'Optimer Regular',     url: 'https://threejs.org/examples/fonts/optimer_regular.typeface.json' },
-    { id: 'optimer_bold',       label: 'Optimer Bold',        url: 'https://threejs.org/examples/fonts/optimer_bold.typeface.json' },
-    { id: 'droid_sans_regular', label: 'Droid Sans Regular',  url: 'https://threejs.org/examples/fonts/droid/droid_sans_regular.typeface.json' },
-    { id: 'droid_sans_bold',    label: 'Droid Sans Bold',     url: 'https://threejs.org/examples/fonts/droid/droid_sans_bold.typeface.json' },
-    { id: 'droid_serif_regular',label: 'Droid Serif Regular', url: 'https://threejs.org/examples/fonts/droid/droid_serif_regular.typeface.json' },
-    { id: 'droid_serif_bold',   label: 'Droid Serif Bold',    url: 'https://threejs.org/examples/fonts/droid/droid_serif_bold.typeface.json' },
+    {
+      id: "helvetiker_regular",
+      label: "Helvetiker Regular",
+      url: "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
+    },
+    {
+      id: "helvetiker_bold",
+      label: "Helvetiker Bold",
+      url: "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
+    },
+    {
+      id: "gentilis_regular",
+      label: "Gentilis Regular",
+      url: "https://threejs.org/examples/fonts/gentilis_regular.typeface.json",
+    },
+    {
+      id: "gentilis_bold",
+      label: "Gentilis Bold",
+      url: "https://threejs.org/examples/fonts/gentilis_bold.typeface.json",
+    },
+    {
+      id: "optimer_regular",
+      label: "Optimer Regular",
+      url: "https://threejs.org/examples/fonts/optimer_regular.typeface.json",
+    },
+    {
+      id: "optimer_bold",
+      label: "Optimer Bold",
+      url: "https://threejs.org/examples/fonts/optimer_bold.typeface.json",
+    },
+    {
+      id: "droid_sans_regular",
+      label: "Droid Sans Regular",
+      url: "https://threejs.org/examples/fonts/droid/droid_sans_regular.typeface.json",
+    },
+    {
+      id: "droid_sans_bold",
+      label: "Droid Sans Bold",
+      url: "https://threejs.org/examples/fonts/droid/droid_sans_bold.typeface.json",
+    },
+    {
+      id: "droid_serif_regular",
+      label: "Droid Serif Regular",
+      url: "https://threejs.org/examples/fonts/droid/droid_serif_regular.typeface.json",
+    },
+    {
+      id: "droid_serif_bold",
+      label: "Droid Serif Bold",
+      url: "https://threejs.org/examples/fonts/droid/droid_serif_bold.typeface.json",
+    },
   ],
 };
 
 const MAT = {
   monogram: { color: 0x5c6ac4, roughness: 0.15, metalness: 0.75 },
-  name:     { color: 0x8a6bbf, roughness: 0.10, metalness: 0.80 },
+  name: { color: 0x8a6bbf, roughness: 0.1, metalness: 0.8 },
 };
 
 export class SceneManager {
   constructor(canvas) {
-    this._canvas         = canvas;
-    this._disposed       = false;
-    this._animFrameId    = null;
-    this._fontCache      = {};   // url → THREE.Font
-    this._meshes         = { monogram: null, name: null };
-    this._currentParams  = null; // pentru race condition guard
+    this._canvas = canvas;
+    this._disposed = false;
+    this._animFrameId = null;
+    this._fontCache = {}; // url → THREE.Font
+    this._meshes = { monogram: null, name: null };
+    this._currentParams = null; // pentru race condition guard
 
     this._initRenderer();
     this._initScene();
@@ -59,11 +140,14 @@ export class SceneManager {
   // ─── Init ────────────────────────────────────────────────────────────────────
 
   _initRenderer() {
-    this._renderer = new THREE.WebGLRenderer({ canvas: this._canvas, antialias: true });
+    this._renderer = new THREE.WebGLRenderer({
+      canvas: this._canvas,
+      antialias: true,
+    });
     this._renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this._renderer.setSize(this._canvas.clientWidth, this._canvas.clientHeight);
-    this._renderer.outputColorSpace    = THREE.SRGBColorSpace;
-    this._renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+    this._renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this._renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this._renderer.toneMappingExposure = 1.2;
     this._resizeObserver = new ResizeObserver(() => this._handleResize());
     this._resizeObserver.observe(this._canvas.parentElement || this._canvas);
@@ -99,15 +183,15 @@ export class SceneManager {
     this._controls = new OrbitControls(this._camera, this._canvas);
     this._controls.enableDamping = true;
     this._controls.dampingFactor = 0.06;
-    this._controls.minDistance   = 10;
-    this._controls.maxDistance   = 600;
-    this._controls.autoRotate    = false;
+    this._controls.minDistance = 10;
+    this._controls.maxDistance = 600;
+    this._controls.autoRotate = false;
   }
 
   _initMaterials() {
     this._materials = {
       monogram: new THREE.MeshStandardMaterial(MAT.monogram),
-      name:     new THREE.MeshStandardMaterial(MAT.name),
+      name: new THREE.MeshStandardMaterial(MAT.name),
     };
   }
 
@@ -128,16 +212,19 @@ export class SceneManager {
     return new Promise((resolve, reject) => {
       new FontLoader().load(
         url,
-        font => { this._fontCache[url] = font; resolve(font); },
+        (font) => {
+          this._fontCache[url] = font;
+          resolve(font);
+        },
         undefined,
-        err => reject(err),
+        (err) => reject(err),
       );
     });
   }
 
   _getFontUrl(role, fontId) {
-    const list  = FONTS[role];
-    const entry = list.find(f => f.id === fontId) ?? list[0];
+    const list = FONTS[role];
+    const entry = list.find((f) => f.id === fontId) ?? list[0];
     return entry.url;
   }
 
@@ -147,19 +234,30 @@ export class SceneManager {
     // Setăm params curent — dacă vine un update nou cât așteptăm fontul, abandonăm pe cel vechi
     this._currentParams = params;
 
+    this._materials.monogram.color.set(params.monogramColor ?? "#5c6ac4");
+    this._materials.name.color.set(params.nameColor ?? "#8a6bbf");
+
     const {
-      monogramLetter, monogramSize,
-      monoScaleX, monoScaleY, monoScaleZ,
+      monogramLetter,
+      monogramSize,
+      monoScaleX,
+      monoScaleY,
+      monoScaleZ,
       monogramFontId,
-      fullName, nameSize,
-      nameScaleX, nameScaleY, nameScaleZ,
+      fullName,
+      nameSize,
+      nameScaleX,
+      nameScaleY,
+      nameScaleZ,
       nameFontId,
-      nameOffsetX, nameOffsetY, nameOffsetZ,
+      nameOffsetX,
+      nameOffsetY,
+      nameOffsetZ,
       letterSpacing,
     } = params;
 
-    const monoUrl = this._getFontUrl('monogram', monogramFontId);
-    const nameUrl = this._getFontUrl('name', nameFontId);
+    const monoUrl = this._getFontUrl("monogram", monogramFontId);
+    const nameUrl = this._getFontUrl("name", nameFontId);
 
     let monoFont, nameFont;
     try {
@@ -168,39 +266,58 @@ export class SceneManager {
         this._loadFont(nameUrl),
       ]);
     } catch (e) {
-      console.error('Font load failed:', e);
+      console.error("Font load failed:", e);
       return;
     }
 
     // Race condition guard — dacă params s-a schimbat cât încărcam, renunțăm
     if (this._currentParams !== params) return;
 
-    this._buildMonogram(monogramLetter, monogramSize, monoScaleX, monoScaleY, monoScaleZ, monoFont);
-    this._buildName(fullName, nameSize, nameScaleX, nameScaleY, nameScaleZ, nameFont, letterSpacing ?? 0);
-    this._alignComposition(nameOffsetX ?? 0, nameOffsetY ?? 0, nameOffsetZ ?? 0);
+    this._buildMonogram(
+      monogramLetter,
+      monogramSize,
+      monoScaleX,
+      monoScaleY,
+      monoScaleZ,
+      monoFont,
+    );
+    this._buildName(
+      fullName,
+      nameSize,
+      nameScaleX,
+      nameScaleY,
+      nameScaleZ,
+      nameFont,
+      letterSpacing ?? 0,
+    );
+    this._alignComposition(
+      nameOffsetX ?? 0,
+      nameOffsetY ?? 0,
+      nameOffsetZ ?? 0,
+    );
   }
 
   // ─── Geometry ────────────────────────────────────────────────────────────────
 
   _buildMonogram(letter, size, sx, sy, sz, font) {
-    this._disposeMesh('monogram');
+    this._disposeMesh("monogram");
     if (!letter?.trim()) return;
 
     const geo = new TextGeometry(letter.trim()[0].toUpperCase(), {
       font,
       size,
       depth: size,
-      curveSegments:  20,
-      bevelEnabled:   true,
+      curveSegments: 20,
+      bevelEnabled: true,
       bevelThickness: size * 0.04,
-      bevelSize:      size * 0.01,
-      bevelSegments:  6,
+      bevelSize: size * 0.01,
+      bevelSegments: 6,
     });
     geo.computeBoundingBox();
     geo.center();
 
     const mesh = new THREE.Mesh(geo, this._materials.monogram);
-    mesh.name = 'monogram';
+    mesh.name = "monogram";
     mesh.scale.set(sx, sy, sz);
     this._meshes.monogram = mesh;
     this._scene.add(mesh);
@@ -218,16 +335,16 @@ export class SceneManager {
    *   → un singur mesh solid, fără artefacte la export STL
    */
   _buildName(text, size, sx, sy, sz, font, letterSpacing) {
-    this._disposeMesh('name');
+    this._disposeMesh("name");
     if (!text?.trim()) return;
 
-    const chars = text.trim().split('');
+    const chars = text.trim().split("");
     const depth = size;
     const letterGeos = [];
     let cursorX = 0;
 
     for (const char of chars) {
-      if (char === ' ') {
+      if (char === " ") {
         // Spațiu = avanasăm cursorul cu 40% din size
         cursorX += size * 0.4 + letterSpacing;
         continue;
@@ -237,11 +354,11 @@ export class SceneManager {
         font,
         size,
         depth,
-        curveSegments:  12,
-        bevelEnabled:   true,
+        curveSegments: 12,
+        bevelEnabled: true,
         bevelThickness: depth * 0.04,
-        bevelSize:      size  * 0.02,
-        bevelSegments:  4,
+        bevelSize: size * 0.02,
+        bevelSegments: 4,
       });
 
       geo.computeBoundingBox();
@@ -261,7 +378,7 @@ export class SceneManager {
 
     // Merge într-un singur geometry
     const merged = mergeGeometries(letterGeos, false);
-    letterGeos.forEach(g => g.dispose());
+    letterGeos.forEach((g) => g.dispose());
 
     if (!merged) return;
 
@@ -270,7 +387,7 @@ export class SceneManager {
     merged.center();
 
     const mesh = new THREE.Mesh(merged, this._materials.name);
-    mesh.name  = 'name';
+    mesh.name = "name";
     mesh.scale.set(sx, sy, sz);
     this._meshes.name = mesh;
     this._scene.add(mesh);
@@ -285,19 +402,19 @@ export class SceneManager {
     if (monogram) monogram.position.set(0, 0, 0);
 
     if (monogram && name) {
-      monogram.geometry.computeBoundingBox();
-      name.geometry.computeBoundingBox();
+      monogram.updateMatrixWorld(true);
+      name.updateMatrixWorld(true);
 
-      const monoBox = monogram.geometry.boundingBox;
-      const nameBox = name.geometry.boundingBox;
+      // Bounding box în world space (include scale aplicat)
+      const monoBox = new THREE.Box3().setFromObject(monogram);
+      const nameBox = new THREE.Box3().setFromObject(name);
 
-      const monoH = (monoBox.max.y - monoBox.min.y) * monogram.scale.y;
-      const monoD = (monoBox.max.z - monoBox.min.z) * monogram.scale.z;
-      const nameW = (nameBox.max.x - nameBox.min.x) * name.scale.x;
-      const monoW = (monoBox.max.x - monoBox.min.x) * monogram.scale.x;
-      const nameD = (nameBox.max.z - nameBox.min.z) * name.scale.z;
+      const monoDepth = monoBox.max.z - monoBox.min.z; // grosimea reală a literei (mm)
+      const nameDepth = nameBox.max.z - nameBox.min.z; // grosimea reală a numelui (mm)
 
-      // Auto-fit dacă depășește lățimea literei
+      // Auto-fit X: dacă numele e mai lat decât 85% din literă, îl scalăm
+      const monoW = monoBox.max.x - monoBox.min.x;
+      const nameW = nameBox.max.x - nameBox.min.x;
       const maxW = monoW * 0.85;
       if (nameW > maxW) {
         const fit = maxW / nameW;
@@ -305,8 +422,15 @@ export class SceneManager {
         name.scale.y *= fit;
       }
 
+      // Y: centrat vertical pe literă, ușor jos (8% din înălțime)
+      const monoH = monoBox.max.y - monoBox.min.y;
       const baseY = -monoH * 0.08;
-      const baseZ = monoD * 0.5 + nameD * 0.5 - monoD * 0.15;
+
+      // Z: numele încastrat — fața numelui aliniată cu fața literei
+      // fața literei = monoBox.max.z
+      // vrem ca fața numelui (nameBox.max.z) să fie la monoBox.max.z
+      // deci: name.position.z = monoBox.max.z - nameBox.max.z
+      const baseZ = monoBox.max.z - nameBox.max.z;
 
       name.position.set(offsetX, baseY + offsetY, baseZ + offsetZ);
     } else if (name) {
@@ -317,9 +441,12 @@ export class SceneManager {
   // ─── Export ──────────────────────────────────────────────────────────────────
 
   _download(buffer, filename) {
-    const blob = new Blob([buffer], { type: 'application/octet-stream' });
-    const url  = URL.createObjectURL(blob);
-    Object.assign(document.createElement('a'), { href: url, download: filename }).click();
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+    Object.assign(document.createElement("a"), {
+      href: url,
+      download: filename,
+    }).click();
     URL.revokeObjectURL(url);
   }
 
@@ -330,7 +457,7 @@ export class SceneManager {
     return geo;
   }
 
-  exportSTL(mode = 'combined') {
+  exportSTL(mode = "combined") {
     const exporter = new STLExporter();
 
     const exportSingle = (geo, filename) => {
@@ -341,62 +468,135 @@ export class SceneManager {
       this._download(buf, filename);
     };
 
-    if (mode === 'combined') {
+    if (mode === "combined") {
+      // ─── combined: neschimbat ─────────────────────────────────────────────
       const group = new THREE.Group();
-      const geos  = [];
-      Object.values(this._meshes).forEach(mesh => {
+      const geos = [];
+      Object.values(this._meshes).forEach((mesh) => {
         if (!mesh) return;
         const geo = this._bakeGeometry(mesh);
         geos.push(geo);
         group.add(new THREE.Mesh(geo));
       });
-      if (!group.children.length) { alert('Nimic de exportat.'); return; }
+      if (!group.children.length) {
+        alert("Nimic de exportat.");
+        return;
+      }
       const buf = exporter.parse(group, { binary: true });
-      geos.forEach(g => g.dispose());
-      this._download(buf, 'monogram_combined.stl');
-
-    } else if (mode === 'letter') {
-      if (!this._meshes.monogram) { alert('Nu există literă.'); return; }
-      exportSingle(this._bakeGeometry(this._meshes.monogram), 'monogram_litera.stl');
-
-    } else if (mode === 'name_only') {
-      if (!this._meshes.name) { alert('Nu există nume.'); return; }
-      exportSingle(this._bakeGeometry(this._meshes.name), 'monogram_nume.stl');
-
-    } else if (mode === 'letter_with_slot') {
+      geos.forEach((g) => g.dispose());
+      this._download(buf, "monogram_combined.stl");
+    } else if (mode === "letter") {
+      // ─── letter: neschimbat ───────────────────────────────────────────────
+      if (!this._meshes.monogram) {
+        alert("Nu există literă.");
+        return;
+      }
+      exportSingle(
+        this._bakeGeometry(this._meshes.monogram),
+        "monogram_litera.stl",
+      );
+    } else if (mode === "name_only") {
+      // ─── name_only: neschimbat ────────────────────────────────────────────
+      if (!this._meshes.name) {
+        alert("Nu există nume.");
+        return;
+      }
+      exportSingle(this._bakeGeometry(this._meshes.name), "monogram_nume.stl");
+    } else if (mode === "letter_with_slot") {
+      // ─── letter_with_slot: litera cu slot adânc parțial ──────────────────
       const { monogram: monoMesh, name: nameMesh } = this._meshes;
-      if (!monoMesh || !nameMesh) { alert('Trebuie să existe atât litera cât și numele.'); return; }
+      if (!monoMesh || !nameMesh) {
+        alert("Trebuie să existe atât litera cât și numele.");
+        return;
+      }
 
-      exportSingle(this._bakeGeometry(monoMesh), 'monogram_litera.stl');
+      // 1. Calculăm adâncimea literei
+      monoMesh.updateMatrixWorld(true);
+      nameMesh.updateMatrixWorld(true);
 
-      // Slot = geometria exactă a numelui, extinsă pe Z să traverseze litera
-      const slotGeo = this._bakeGeometry(nameMesh);
-      slotGeo.computeBoundingBox();
-      const bbox   = slotGeo.boundingBox;
+      const monoBox = new THREE.Box3().setFromObject(monoMesh);
+      const monoDepth = monoBox.max.z - monoBox.min.z; // adâncimea totală a literei
+
+      // 2. Construim brush-ul pentru literă (geometria originală cu world transform)
+      const monoGeo = this._bakeGeometry(monoMesh);
+      const monoBrush = new Brush(monoGeo);
+      monoBrush.updateMatrixWorld(true);
+
+      // 3. Construim brush-ul pentru slot — numele scalat pe Z la 60% din adâncimea literei
+      //    și poziționat să intre din față (Z max al literei)
+      const nameGeo = this._bakeGeometry(nameMesh);
+      nameGeo.computeBoundingBox();
+      const nameBox = nameGeo.boundingBox;
+      const nameDepth = nameBox.max.z - nameBox.min.z;
+      const slotDepth = monoDepth * 0.6; // slot = 60% din adâncimea literei
+
+      // Scalăm geometria numelui pe Z să aibă exact slotDepth + 1mm toleranță
+      const scaleZ = (slotDepth + 1) / nameDepth;
+      // Toleranță X/Y de 0.3mm pentru fit ușor
+      const scaleTol =
+        1.0 +
+        0.3 /
+          Math.max(
+            nameBox.max.x - nameBox.min.x,
+            nameBox.max.y - nameBox.min.y,
+          );
+
+      const pos = nameGeo.attributes.position;
+      nameGeo.computeBoundingBox();
       const center = new THREE.Vector3();
-      bbox.getCenter(center);
-      const sz = new THREE.Vector3();
-      bbox.getSize(sz);
+      nameGeo.boundingBox.getCenter(center);
 
-      const tol       = 0.3;
-      const monoB     = new THREE.Box3().setFromObject(monoMesh);
-      const monoDepth = monoB.max.z - monoB.min.z;
-      const sX = (sz.x + tol * 2) / sz.x;
-      const sY = (sz.y + tol * 2) / sz.y;
-      const sZ = (monoDepth + 4)  / sz.z;
-
-      const pos = slotGeo.attributes.position;
       for (let i = 0; i < pos.count; i++) {
-        pos.setXYZ(i,
-          center.x + (pos.getX(i) - center.x) * sX,
-          center.y + (pos.getY(i) - center.y) * sY,
-          center.z + (pos.getZ(i) - center.z) * sZ,
+        const x = pos.getX(i),
+          y = pos.getY(i),
+          z = pos.getZ(i);
+        pos.setXYZ(
+          i,
+          center.x + (x - center.x) * scaleTol,
+          center.y + (y - center.y) * scaleTol,
+          center.z + (z - center.z) * scaleZ,
         );
       }
       pos.needsUpdate = true;
-      slotGeo.computeVertexNormals();
-      exportSingle(slotGeo, 'monogram_slot_negative.stl');
-      exportSingle(this._bakeGeometry(nameMesh), 'monogram_nume.stl');
+      nameGeo.computeVertexNormals();
+      nameGeo.computeBoundingBox();
+
+      // Repoziționăm slotul: față aliniată cu fața literei (Z max al literei)
+      // astfel încât slotul intră din față și se oprește la 40% din adâncime
+      const slotCenter = new THREE.Vector3();
+      nameGeo.boundingBox.getCenter(slotCenter);
+      const slotHalfDepth =
+        (nameGeo.boundingBox.max.z - nameGeo.boundingBox.min.z) / 2;
+
+      // Z față literă − slotHalfDepth = centrul slotului astfel că fața lui = fața literei
+      const targetZ = monoBox.max.z - slotHalfDepth;
+      nameGeo.translate(0, 0, targetZ - slotCenter.z);
+
+      const nameBrush = new Brush(nameGeo);
+      nameBrush.updateMatrixWorld(true);
+
+      // 4. CSG subtract: litera − slot
+      const evaluator = new Evaluator();
+      let resultMesh;
+      try {
+        resultMesh = evaluator.evaluate(monoBrush, nameBrush, SUBTRACTION);
+      } catch (e) {
+        console.error("CSG subtraction failed:", e);
+        alert("Eroare la generarea slot-ului. Încearcă cu forme mai simple.");
+        monoGeo.dispose();
+        nameGeo.dispose();
+        return;
+      }
+
+      // 5. Export literă cu slot
+      const resultGeo = resultMesh.geometry.clone();
+      exportSingle(resultGeo, "monogram_litera_cu_slot.stl");
+
+      // 6. Export numele separat (pentru a fi printat și încastrat)
+      exportSingle(this._bakeGeometry(nameMesh), "monogram_nume_insert.stl");
+
+      monoGeo.dispose();
+      nameGeo.dispose();
     }
   }
 
@@ -423,9 +623,9 @@ export class SceneManager {
     this._disposed = true;
     if (this._animFrameId !== null) cancelAnimationFrame(this._animFrameId);
     if (this._resizeObserver) this._resizeObserver.disconnect();
-    this._disposeMesh('monogram');
-    this._disposeMesh('name');
-    Object.values(this._materials).forEach(m => m.dispose());
+    this._disposeMesh("monogram");
+    this._disposeMesh("name");
+    Object.values(this._materials).forEach((m) => m.dispose());
     this._controls.dispose();
     this._renderer.dispose();
   }
