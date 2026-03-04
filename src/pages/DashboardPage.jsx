@@ -10,6 +10,8 @@ import { useAuth } from "../context/AuthContext";
 import { OverviewPage } from "./dashboard/OverviewPage";
 import { FilamentPage } from "./dashboard/FilamentPage";
 import styles from "./DashboardPage.module.css";
+import { PrintsPage } from "./dashboard/PrintsPage";
+import { OrdersPage } from "./dashboard/OrdersPage";
 
 // Icons
 const GridIcon = () => (
@@ -130,9 +132,8 @@ const NAV_ITEMS = [
     to: "/dashboard/prints",
     label: "Imprimări",
     icon: <PrintIcon />,
-    soon: true,
   },
-  { to: "/dashboard/orders", label: "Comenzi", icon: <BoxIcon />, soon: true },
+  { to: "/dashboard/orders", label: "Comenzi", icon: <BoxIcon /> },
   {
     to: "/dashboard/settings",
     label: "Setări",
@@ -222,8 +223,8 @@ export function DashboardPage() {
         <Routes>
           <Route index element={<OverviewPage />} />
           <Route path="filament" element={<FilamentPage />} />
-          <Route path="prints" element={<ComingSoon title="Imprimări" />} />
-          <Route path="orders" element={<ComingSoon title="Comenzi" />} />
+          <Route path="prints" element={<PrintsPage title="Imprimări" />} />
+          <Route path="orders" element={<OrdersPage title="Comenzi" />} />
           <Route path="settings" element={<ComingSoon title="Setări" />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
