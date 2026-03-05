@@ -243,6 +243,7 @@ export class LicensePlateScene {
         height: TEXT_DEPTH,
         curveSegments: 8,
         bevelEnabled: false,
+                depth: 1,
       });
       numGeo.computeBoundingBox();
       const numW = numGeo.boundingBox.max.x - numGeo.boundingBox.min.x;
@@ -268,18 +269,19 @@ export class LicensePlateScene {
     if (this._countryText) {
       const taraGeo = new TextGeometry(this._countryText, {
         font: this._font,
-        size: 5,
+        size: 4,
         height: TEXT_DEPTH,
         curveSegments: 8,
-        bevelEnabled: false,
+        bevelEnabled: false,        
+        depth: 1,
       });
       taraGeo.computeBoundingBox();
       const taraW = taraGeo.boundingBox.max.x - taraGeo.boundingBox.min.x;
       const taraH = taraGeo.boundingBox.max.y - taraGeo.boundingBox.min.y;
       const bandCenterX = -W / 2 + 1 + (EU_BAND_W - 1) / 2;
       taraGeo.translate(
-        bandCenterX - taraW / 2,
-        -taraH / 4,
+        bandCenterX - taraW / 2+0.5,
+        -taraH / 4 ,
         baseZ
       );
       const taraMat = new THREE.MeshStandardMaterial({
@@ -300,6 +302,7 @@ export class LicensePlateScene {
         height: NAME_DEPTH,
         curveSegments: 8,
         bevelEnabled: false,
+        depth: 1,
       });
       numeGeo.computeBoundingBox();
       const numeW = numeGeo.boundingBox.max.x - numeGeo.boundingBox.min.x;
