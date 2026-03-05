@@ -16,6 +16,16 @@ const MODELS = [
     accent: "#5c6ac4",
     preview: "monogram", // tip de preview canvas
   },
+   {
+    id: "license_plate",
+    path: "/customizer/license_plate",
+    title: "Plăcuță Auto",
+    description:
+      "Plăcuță de înmatriculare 3D cu număr și nume personalizate. Export STL pentru imprimare 3D.",
+    tags: ["Serif", "Personalizabil", "STL Export"],
+    accent: "#5c6ac4",
+    preview: "license_plate", // tip de preview canvas
+  },
   // Adaugă modele viitoare aici:
   // { id: 'ring', path: '/customizer/ring', title: 'Inel cu inițiale', ... },
   // { id: 'tag',  path: '/customizer/tag',  title: 'Tag personalizat', ... },

@@ -8,6 +8,7 @@ import { LoginPage } from "./pages/auth/LoginPage";
 import { RegisterPage } from "./pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { DashboardPage } from './pages/DashboardPage';
+import LicensePlatePage from "./pages/LicensePlatePage";
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -30,6 +31,14 @@ function Routes_() {
         element={
           <PrivateRoute>
             <CustomizerPage />
+          </PrivateRoute>
+        }
+      />
+        <Route
+        path="/customizer/license_plate"
+        element={
+          <PrivateRoute>
+            <LicensePlatePage />
           </PrivateRoute>
         }
       />

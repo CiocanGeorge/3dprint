@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import styles from './PrintsPage.module.css';
 
-const STORAGE_KEY_PRINTS   = 'ms_prints';
+const STORAGE_KEY_PRINTS    = 'ms_prints';
 const STORAGE_KEY_FILAMENTS = 'ms_filaments';
 
 const STATUSES = ['finalizat', 'esuat', 'in_curs'];
 const STATUS_LABELS = { finalizat: 'Finalizat', esuat: 'Eșuat', in_curs: 'În curs' };
 const STATUS_COLORS = { finalizat: 'green', esuat: 'red', in_curs: 'blue' };
 
-function load(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } }
-function save(key, d) { localStorage.setItem(key, JSON.stringify(d)); }
+function loadPrints()    { try { return JSON.parse(localStorage.getItem(STORAGE_KEY_PRINTS)    || '[]'); } catch { return []; } }
+function loadFilaments() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY_FILAMENTS) || '[]'); } catch { return []; } }
+function savePrints(d)    { localStorage.setItem(STORAGE_KEY_PRINTS,    JSON.stringify(d)); }
+function saveFilaments(d) { localStorage.setItem(STORAGE_KEY_FILAMENTS, JSON.stringify(d)); }
 function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
 const EMPTY_FORM = {
@@ -17,17 +19,31 @@ const EMPTY_FORM = {
   status: 'finalizat', date: new Date().toISOString().slice(0, 10), notes: ''
 };
 
+// Deduct grams from a filament array (negative delta = deduct)
+function applyFilamentDelta(filaments, filamentId, delta) {
+  if (!filamentId || delta === 0) return filaments;
+  return filaments.map(f => {
+    if (f.id !== filamentId) return f;
+    const current = f.remaining ?? f.weight;
+    return { ...f, remaining: Math.max(0, current + delta) };
+  });
+}
+
 export function PrintsPage() {
-  const [prints, setPrints]     = useState(() => load(STORAGE_KEY_PRINTS));
-  const [filaments]             = useState(() => load(STORAGE_KEY_FILAMENTS));
-  const [modal, setModal]       = useState(null);
-  const [current, setCurrent]   = useState(null);
-  const [form, setForm]         = useState(EMPTY_FORM);
-  const [search, setSearch]     = useState('');
+  const [prints, setPrints]       = useState(loadPrints);
+  const [filaments, setFilaments] = useState(loadFilaments);
+  const [modal, setModal]         = useState(null);
+  const [current, setCurrent]     = useState(null);
+  const [form, setForm]           = useState(EMPTY_FORM);
+  const [search, setSearch]       = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  useEffect(() => { save(STORAGE_KEY_PRINTS, prints); }, [prints]);
+  // Persist prints whenever they change
+  useEffect(() => { savePrints(prints); }, [prints]);
+
+  // Persist filaments whenever they change (deductions reflected in ms_filaments)
+  useEffect(() => { saveFilaments(filaments); }, [filaments]);
 
   const filtered = prints
     .filter(p => {
@@ -37,36 +53,80 @@ export function PrintsPage() {
     })
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  const totalGrams = prints.filter(p => p.status === 'finalizat')
-    .reduce((s, p) => s + Number(p.gramsUsed || 0), 0);
+  const totalGrams  = prints.filter(p => p.status === 'finalizat').reduce((s, p) => s + Number(p.gramsUsed || 0), 0);
   const totalPrints = prints.filter(p => p.status === 'finalizat').length;
   const inProgress  = prints.filter(p => p.status === 'in_curs').length;
 
   const openAdd  = () => { setForm(EMPTY_FORM); setCurrent(null); setModal('add'); };
-  const openEdit = p => { setForm({ ...p }); setCurrent(p); setModal('edit'); };
+  const openEdit = p  => { setForm({ ...p });   setCurrent(p);    setModal('edit'); };
 
   const handleSave = () => {
     if (!form.name.trim()) return;
+
     const entry = {
       ...form,
-      gramsUsed: Number(form.gramsUsed) || 0,
+      gramsUsed:   Number(form.gramsUsed)   || 0,
       durationMin: Number(form.durationMin) || 0,
     };
+
     if (current) {
+      // ── EDIT ──────────────────────────────────────────────────────────────
+      // Reverse the old deduction, then apply the new one.
+      // Only "finalizat" prints affect stock.
+      let updatedFilaments = filaments;
+
+      const oldGrams      = Number(current.gramsUsed)  || 0;
+      const oldFilamentId = current.filamentId;
+      const oldFinished   = current.status === 'finalizat';
+
+      const newGrams      = entry.gramsUsed;
+      const newFilamentId = entry.filamentId;
+      const newFinished   = entry.status === 'finalizat';
+
+      // Restore old deduction
+      if (oldFinished && oldFilamentId) {
+        updatedFilaments = applyFilamentDelta(updatedFilaments, oldFilamentId, +oldGrams);
+      }
+      // Apply new deduction
+      if (newFinished && newFilamentId) {
+        updatedFilaments = applyFilamentDelta(updatedFilaments, newFilamentId, -newGrams);
+      }
+
+      setFilaments(updatedFilaments);
       setPrints(ps => ps.map(p => p.id === current.id ? { ...p, ...entry } : p));
-      // update filament remaining if grams changed
+
     } else {
+      // ── ADD ───────────────────────────────────────────────────────────────
       const newPrint = { ...entry, id: uid(), createdAt: new Date().toISOString() };
       setPrints(ps => [...ps, newPrint]);
+
+      if (entry.status === 'finalizat' && entry.filamentId) {
+        setFilaments(fs => applyFilamentDelta(fs, entry.filamentId, -entry.gramsUsed));
+      }
     }
+
     setModal(null);
   };
 
-  const handleDelete = id => { setPrints(ps => ps.filter(p => p.id !== id)); setDeleteConfirm(null); setModal(null); };
+  const handleDelete = id => {
+    const print = prints.find(p => p.id === id);
+    if (print && print.status === 'finalizat' && print.filamentId) {
+      // Restore consumed grams back to filament
+      setFilaments(fs => applyFilamentDelta(fs, print.filamentId, +(Number(print.gramsUsed) || 0)));
+    }
+    setPrints(ps => ps.filter(p => p.id !== id));
+    setDeleteConfirm(null);
+    setModal(null);
+  };
 
   const setF = k => v => setForm(f => ({ ...f, [k]: v }));
-
   const getFilament = id => filaments.find(f => f.id === id);
+
+  // Selected filament's remaining (for live feedback in form)
+  const selectedFilament = form.filamentId ? getFilament(form.filamentId) : null;
+  const remainingAfter   = selectedFilament
+    ? Math.max(0, (selectedFilament.remaining ?? selectedFilament.weight) - (Number(form.gramsUsed) || 0))
+    : null;
 
   return (
     <div className={styles.page}>
@@ -82,9 +142,9 @@ export function PrintsPage() {
 
       {/* Stats */}
       <div className={styles.statsGrid}>
-        <StatCard icon="✅" label="Finalizate" value={totalPrints} color="green" />
-        <StatCard icon="⚖️" label="Filament consumat" value={`${totalGrams.toLocaleString()}g`} color="violet" />
-        <StatCard icon="🖨️" label="În curs" value={inProgress} color={inProgress > 0 ? 'blue' : 'indigo'} />
+        <StatCard icon="✅" label="Finalizate"         value={totalPrints}                    color="green"  />
+        <StatCard icon="⚖️" label="Filament consumat"  value={`${totalGrams.toLocaleString()}g`} color="violet" />
+        <StatCard icon="🖨️" label="În curs"            value={inProgress}                     color={inProgress > 0 ? 'blue' : 'indigo'} />
       </div>
 
       {/* Toolbar */}
@@ -122,6 +182,7 @@ export function PrintsPage() {
                     <div className={styles.rowName}>{p.name}</div>
                     <div className={styles.rowMeta}>
                       {fil ? `${fil.brand} ${fil.material} · ${fil.colorName}` : 'Filament necunoscut'}
+                      {p.gramsUsed > 0 && ` · ${p.gramsUsed}g consumat`}
                       {p.durationMin > 0 && ` · ${formatDuration(p.durationMin)}`}
                     </div>
                   </div>
@@ -145,31 +206,50 @@ export function PrintsPage() {
         <Modal title={modal === 'add' ? 'Adaugă imprimare' : 'Editează imprimare'} onClose={() => setModal(null)}>
           <div className={styles.formGrid}>
             <Field label="Nume model *" wide>
-              <input className={styles.input} value={form.name} onChange={e => setF('name')(e.target.value)} placeholder="Vaza decorativă, suport telefon..." />
+              <input className={styles.input} value={form.name}
+                onChange={e => setF('name')(e.target.value)}
+                placeholder="Vaza decorativă, suport telefon..." />
             </Field>
             <Field label="Filament folosit">
-              <select className={styles.input} value={form.filamentId} onChange={e => setF('filamentId')(e.target.value)}>
+              <select className={styles.input} value={form.filamentId}
+                onChange={e => setF('filamentId')(e.target.value)}>
                 <option value="">— Selectează —</option>
                 {filaments.map(f => (
-                  <option key={f.id} value={f.id}>{f.brand} {f.material} · {f.colorName}</option>
+                  <option key={f.id} value={f.id}>
+                    {f.brand} {f.material} · {f.colorName} ({f.remaining ?? f.weight}g rămase)
+                  </option>
                 ))}
               </select>
             </Field>
             <Field label="Filament consumat (g)">
               <input className={styles.input} type="number" min="0" value={form.gramsUsed}
                 onChange={e => setF('gramsUsed')(e.target.value)} placeholder="0" />
+              {/* Live preview of remaining stock */}
+              {selectedFilament && form.gramsUsed > 0 && form.status === 'finalizat' && (
+                <div style={{
+                  marginTop: 6, fontSize: 12,
+                  color: remainingAfter < 100 ? '#ef4444' : '#16a34a',
+                  fontWeight: 500
+                }}>
+                  {remainingAfter < 100 ? '⚠ ' : '✓ '}
+                  Stoc după imprimare: {remainingAfter}g
+                  {remainingAfter < 100 ? ' — stoc scăzut!' : ''}
+                </div>
+              )}
             </Field>
             <Field label="Durată (minute)">
               <input className={styles.input} type="number" min="0" value={form.durationMin}
                 onChange={e => setF('durationMin')(e.target.value)} placeholder="0" />
             </Field>
             <Field label="Status">
-              <select className={styles.input} value={form.status} onChange={e => setF('status')(e.target.value)}>
+              <select className={styles.input} value={form.status}
+                onChange={e => setF('status')(e.target.value)}>
                 {STATUSES.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
               </select>
             </Field>
             <Field label="Dată">
-              <input className={styles.input} type="date" value={form.date} onChange={e => setF('date')(e.target.value)} />
+              <input className={styles.input} type="date" value={form.date}
+                onChange={e => setF('date')(e.target.value)} />
             </Field>
             <Field label="Note" wide>
               <textarea className={`${styles.input} ${styles.textarea}`} value={form.notes}
@@ -192,6 +272,10 @@ export function PrintsPage() {
         <Modal title="Confirmare ștergere" onClose={() => setDeleteConfirm(null)} small>
           <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20 }}>
             Ești sigur că vrei să ștergi această imprimare?
+            {prints.find(p => p.id === deleteConfirm)?.status === 'finalizat' &&
+              prints.find(p => p.id === deleteConfirm)?.filamentId &&
+              ` Gramele consumate (${prints.find(p => p.id === deleteConfirm)?.gramsUsed}g) vor fi restaurate în stocul filamentului.`
+            }
           </p>
           <div className={styles.modalFooter}>
             <button className={styles.cancelBtn} onClick={() => setDeleteConfirm(null)}>Anulează</button>
