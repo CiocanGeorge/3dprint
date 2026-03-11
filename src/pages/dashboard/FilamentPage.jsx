@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../context/AuthContext";
 import styles from "./FilamentPage.module.css";
 
-const STORAGE_KEY = "ms_filaments";
 const MATERIALS = [
   "PLA",
   "PETG",
@@ -14,21 +15,6 @@ const MATERIALS = [
   "CF-PLA",
   "Altul",
 ];
-const WEIGHTS = [250, 500, 1000, 2000];
-
-function load() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-function save(d) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
-}
-function uid() {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
 
 const EMPTY_FORM = {
   brand: "",
@@ -42,19 +28,65 @@ const EMPTY_FORM = {
   purchaseDate: "",
 };
 
+// Mapează din Supabase (snake_case) → app (camelCase)
+function fromDB(row) {
+  return {
+    id: row.id,
+    brand: row.brand,
+    material: row.material,
+    colorName: row.color_name,
+    color: row.color,
+    weight: row.weight,
+    remaining: row.remaining,
+    price: row.price,
+    notes: row.notes,
+    purchaseDate: row.purchase_date,
+    createdAt: row.created_at,
+  };
+}
+
+// Mapează din app → Supabase
+function toDB(form, userId) {
+  return {
+    user_id: userId,
+    brand: form.brand,
+    material: form.material,
+    color_name: form.colorName,
+    color: form.color,
+    weight: Number(form.weight),
+    remaining: Number(form.remaining),
+    price: form.price ? Number(form.price) : null,
+    notes: form.notes || null,
+    purchase_date: form.purchaseDate || null,
+  };
+}
+
 export function FilamentPage() {
-  const [filaments, setFilaments] = useState(load);
-  const [modal, setModal] = useState(null); // null | 'add' | 'edit' | 'view'
+  const { user } = useAuth();
+  const [filaments, setFilaments] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
+  const [modal, setModal] = useState(null);
   const [current, setCurrent] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [search, setSearch] = useState("");
   const [filterMat, setFilterMat] = useState("");
   const [sortBy, setSortBy] = useState("date");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [saving, setSaving] = useState(false);
 
+  // Încarcă filamentele din Supabase
   useEffect(() => {
-    save(filaments);
-  }, [filaments]);
+    if (!user) return;
+    setLoadingData(true);
+    supabase
+      .from("filaments")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (!error) setFilaments(data.map(fromDB));
+        setLoadingData(false);
+      });
+  }, [user]);
 
   const filtered = filaments
     .filter((f) => {
@@ -70,8 +102,7 @@ export function FilamentPage() {
     .sort((a, b) => {
       if (sortBy === "date")
         return new Date(b.createdAt) - new Date(a.createdAt);
-      if (sortBy === "remaining")
-        return (a.remaining ?? a.weight) - (b.remaining ?? b.weight);
+      if (sortBy === "remaining") return a.remaining - b.remaining;
       if (sortBy === "brand") return a.brand.localeCompare(b.brand);
       return 0;
     });
@@ -82,7 +113,7 @@ export function FilamentPage() {
     setModal("add");
   };
   const openEdit = (f) => {
-    setForm({ ...f, remaining: f.remaining ?? f.weight });
+    setForm({ ...f });
     setCurrent(f);
     setModal("edit");
   };
@@ -91,51 +122,69 @@ export function FilamentPage() {
     setModal("view");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.brand.trim() || !form.colorName.trim()) return;
+    setSaving(true);
     if (current) {
-      setFilaments((fs) =>
-        fs.map((f) => (f.id === current.id ? { ...f, ...form } : f)),
-      );
+      const { data, error } = await supabase
+        .from("filaments")
+        .update(toDB(form, user.id))
+        .eq("id", current.id)
+        .select()
+        .single();
+      if (!error)
+        setFilaments((fs) =>
+          fs.map((f) => (f.id === current.id ? fromDB(data) : f)),
+        );
     } else {
-      setFilaments((fs) => [
-        ...fs,
-        {
-          ...form,
-          id: uid(),
-          weight: Number(form.weight),
-          remaining: Number(form.remaining ?? form.weight),
-          price: form.price ? Number(form.price) : null,
-          createdAt: new Date().toISOString(),
-        },
-      ]);
+      const { data, error } = await supabase
+        .from("filaments")
+        .insert(toDB(form, user.id))
+        .select()
+        .single();
+      if (!error) setFilaments((fs) => [fromDB(data), ...fs]);
     }
+    setSaving(false);
     setModal(null);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    await supabase.from("filaments").delete().eq("id", id);
     setFilaments((fs) => fs.filter((f) => f.id !== id));
     setDeleteConfirm(null);
     setModal(null);
   };
 
-  const updateRemaining = (id, delta) => {
-    setFilaments((fs) =>
-      fs.map((f) =>
-        f.id === id
-          ? {
-              ...f,
-              remaining: Math.max(
-                0,
-                Math.min(f.weight, (f.remaining ?? f.weight) + delta),
-              ),
-            }
-          : f,
-      ),
-    );
+  const updateRemaining = async (id, delta) => {
+    const f = filaments.find((f) => f.id === id);
+    if (!f) return;
+    const newRemaining = Math.max(0, Math.min(f.weight, f.remaining + delta));
+    const { data, error } = await supabase
+      .from("filaments")
+      .update({ remaining: newRemaining })
+      .eq("id", id)
+      .select()
+      .single();
+    if (!error)
+      setFilaments((fs) => fs.map((f) => (f.id === id ? fromDB(data) : f)));
   };
 
   const setF = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
+
+  if (loadingData)
+    return (
+      <div
+        className={styles.page}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "var(--text-secondary)",
+        }}
+      >
+        Se încarcă...
+      </div>
+    );
 
   return (
     <div className={styles.page}>
@@ -149,7 +198,6 @@ export function FilamentPage() {
         </button>
       </div>
 
-      {/* Filters */}
       <div className={styles.toolbar}>
         <div className={styles.searchWrap}>
           <SearchIcon />
@@ -183,7 +231,6 @@ export function FilamentPage() {
         </select>
       </div>
 
-      {/* Grid */}
       {filtered.length === 0 ? (
         <div className={styles.empty}>
           <div className={styles.emptyIcon}>🧵</div>
@@ -218,7 +265,6 @@ export function FilamentPage() {
         </div>
       )}
 
-      {/* Modal add/edit */}
       {(modal === "add" || modal === "edit") && (
         <Modal
           title={modal === "add" ? "Adaugă rolă nouă" : "Editează rolă"}
@@ -273,14 +319,12 @@ export function FilamentPage() {
                 className={styles.input}
                 type="number"
                 min="0"
-                step="1000"
                 value={form.weight}
                 onChange={(e) => {
-                  const val = Number(e.target.value);
-                  setF("weight")(val);
-                  setF("remaining")(val);
+                  const v = Number(e.target.value);
+                  setF("weight")(v);
+                  setF("remaining")(v);
                 }}
-                placeholder="ex: 1000, 5000, 10000..."
               />
             </Field>
             <Field label="Cantitate rămasă (g)">
@@ -334,14 +378,21 @@ export function FilamentPage() {
             <button className={styles.cancelBtn} onClick={() => setModal(null)}>
               Anulează
             </button>
-            <button className={styles.saveBtn} onClick={handleSave}>
-              {modal === "add" ? "Adaugă" : "Salvează"}
+            <button
+              className={styles.saveBtn}
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving
+                ? "Se salvează..."
+                : modal === "add"
+                  ? "Adaugă"
+                  : "Salvează"}
             </button>
           </div>
         </Modal>
       )}
 
-      {/* Delete confirm */}
       {deleteConfirm && (
         <Modal
           title="Confirmare ștergere"
@@ -379,10 +430,8 @@ export function FilamentPage() {
 }
 
 function FilamentCard({ f, onEdit, onView, onAdd, onSub }) {
-  const remaining = f.remaining ?? f.weight;
-  const pct = Math.min(100, (remaining / f.weight) * 100);
-  const isLow = remaining < 100;
-
+  const pct = Math.min(100, (f.remaining / f.weight) * 100);
+  const isLow = f.remaining < 100;
   return (
     <div
       className={`${styles.card} ${isLow ? styles.cardLow : ""}`}
@@ -409,7 +458,6 @@ function FilamentCard({ f, onEdit, onView, onAdd, onSub }) {
           <EditIcon />
         </button>
       </div>
-
       <div className={styles.cardProgress}>
         <div className={styles.progressBar}>
           <div
@@ -421,21 +469,19 @@ function FilamentCard({ f, onEdit, onView, onAdd, onSub }) {
           />
         </div>
         <div className={styles.progressLabel}>
-          <span className={isLow ? styles.lowText : ""}>{remaining}g</span>
+          <span className={isLow ? styles.lowText : ""}>{f.remaining}g</span>
           <span className={styles.totalText}>/ {f.weight}g</span>
         </div>
       </div>
-
       <div className={styles.cardActions} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.qtyBtn} onClick={onSub} title="-10g">
+        <button className={styles.qtyBtn} onClick={onSub}>
           −10g
         </button>
         <span className={styles.qtyPct}>{Math.round(pct)}%</span>
-        <button className={styles.qtyBtn} onClick={onAdd} title="+10g">
+        <button className={styles.qtyBtn} onClick={onAdd}>
           +10g
         </button>
       </div>
-
       {isLow && <div className={styles.lowBadge}>⚠ Stoc scăzut</div>}
       {f.price && <div className={styles.priceBadge}>{f.price} RON</div>}
     </div>

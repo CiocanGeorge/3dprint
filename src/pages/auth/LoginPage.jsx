@@ -51,12 +51,7 @@ export function LoginPage() {
 
         {error && <div className={styles.alert}><AlertIcon />{error}</div>}
 
-        <button className={styles.googleBtn} onClick={handleGoogle} disabled={gLoading}>
-          {gLoading ? <Spinner /> : <><GoogleIcon />Continuă cu Google</>}
-        </button>
-
-        <div className={styles.divider}><span>sau</span></div>
-
+       
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <label className={styles.label}>Email</label>

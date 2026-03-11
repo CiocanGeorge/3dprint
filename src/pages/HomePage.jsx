@@ -16,7 +16,7 @@ const MODELS = [
     accent: "#5c6ac4",
     preview: "monogram", // tip de preview canvas
   },
-   {
+  {
     id: "license_plate",
     path: "/customizer/license_plate",
     title: "Plăcuță Auto",
@@ -211,7 +211,7 @@ export function HomePage() {
                 className={styles.avatarBtn}
                 onClick={() => navigate("/profile")}
               >
-                {user.initials}
+                {user?.initials || user?.email?.[0]?.toUpperCase() || "U"}
               </button>
             </div>
           ) : (
