@@ -9,6 +9,7 @@ import { RegisterPage } from "./pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { DashboardPage } from './pages/DashboardPage';
 import LicensePlatePage from "./pages/LicensePlatePage";
+import { LandingPage } from "./pages/LandingPage";
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -19,13 +20,13 @@ function PrivateRoute({ children }) {
 function GuestRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
   if (loading) return null;
-  return !isAuthenticated ? children : <Navigate to="/" replace />;
+  return !isAuthenticated ? children : <Navigate to="/dashboard" replace />;
 }
 
 function Routes_() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<LandingPage />} />
       <Route
         path="/customizer/monogram"
         element={
