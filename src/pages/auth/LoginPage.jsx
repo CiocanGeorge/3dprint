@@ -42,7 +42,7 @@ export function LoginPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.logo}>
-          <span className={styles.logoMark}>M</span>
+          <span className={styles.logoMark}>3D</span>
           <div>
             <div className={styles.logoTitle}>3D•Print Studio</div>
             <div className={styles.logoSub}>Intră în cont</div>

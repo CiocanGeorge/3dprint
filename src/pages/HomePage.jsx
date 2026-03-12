@@ -191,7 +191,7 @@ export function HomePage() {
       {/* Nav */}
       <nav className={styles.nav}>
         <div className={styles.navLogo}>
-          <span className={styles.navLogoMark}>M</span>
+          <span className={styles.navLogoMark}>3D</span>
           <div>
             <div className={styles.navLogoTitle}>3D•Print Studio</div>
             <div className={styles.navLogoSub}>3D Print Customizer</div>

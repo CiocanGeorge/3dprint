@@ -163,10 +163,10 @@ export function DashboardPage() {
             onClick={() => navigate("/")}
             title="Acasă"
           >
-            <span className={styles.brandMark}>M</span>
+            <span className={styles.brandMark}>3D</span>
             {!collapsed && (
               <div className={styles.brandText}>
-                <div className={styles.brandTitle}>Monogram</div>
+                <div className={styles.brandTitle}>3D•Print Studio</div>
                 <div className={styles.brandSub}>Studio</div>
               </div>
             )}

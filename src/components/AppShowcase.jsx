@@ -136,7 +136,7 @@ function Sidebar({ active }) {
   return (
     <div style={{ width: 110, background: '#0f172a', padding: '14px 10px', display: 'flex', flexDirection: 'column', gap: 2, flexShrink: 0 }}>
       <div style={{ marginBottom: 14, paddingLeft: 4 }}>
-        <span style={{ width: 24, height: 24, background: '#5c6ac4', borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 12 }}>M</span>
+        <span style={{ width: 24, height: 24, background: '#5c6ac4', borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 12 }}>3D</span>
       </div>
       {['Overview','Filamente','Imprimări','Comenzi','Calculator','Setări'].map(item => (
         <div key={item} style={{ fontSize: 9.5, color: item === active ? '#fff' : 'rgba(255,255,255,0.35)', background: item === active ? 'rgba(255,255,255,0.1)' : 'transparent', fontWeight: item === active ? 600 : 400, padding: '6px 8px', borderRadius: 7 }}>{item}</div>

@@ -207,7 +207,7 @@ export function ControlPanel({ params, onChange, onExport }) {
   return (
     <aside className={styles.panel}>
       <div className={styles.header}>
-        <span className={styles.logoMark}>M</span>
+        <span className={styles.logoMark}>3D</span>
         <div>
           <div className={styles.logoTitle}>3D•Print Studio</div>
           <div className={styles.logoSub}>3D Customizer</div>

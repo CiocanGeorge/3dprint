@@ -158,7 +158,7 @@ export function LandingPage() {
       <footer style={s.footer}>
         <div style={s.footerInner}>
           <div style={s.footerLogo}>
-            <span style={s.footerMark}>M</span>
+            <span style={s.footerMark}>3D</span>
             <span style={s.footerBrand}>3D•Print Studio</span>
           </div>
           <p style={s.footerDesc}>
@@ -188,7 +188,7 @@ function Nav() {
     <nav style={{ ...s.nav, ...(scrolled ? s.navScrolled : {}) }}>
       <div style={s.navInner}>
         <div style={s.navLogo}>
-          <span style={s.navMark}>M</span>
+          <span style={s.navMark}>3D</span>
           <span style={s.navBrand}>3D•Print Studio</span>
         </div>
         <div style={s.navLinks}>
@@ -264,7 +264,7 @@ function MockDashboard() {
     <div style={s.mock}>
       {/* Mock sidebar */}
       <div style={s.mockSidebar}>
-        <div style={s.mockLogo}><span style={s.mockLogoMark}>M</span></div>
+        <div style={s.mockLogo}><span style={s.mockLogoMark}>3D</span></div>
         {['Overview','Filamente','Imprimări','Comenzi','Calculator','Setări'].map((item, i) => (
           <div key={item} style={{ ...s.mockNavItem, ...(i === 0 ? s.mockNavActive : {}) }}>{item}</div>
         ))}
