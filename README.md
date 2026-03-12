@@ -1,4 +1,4 @@
-# Monogram Studio — 3D Customizer
+# 3D•Print Studio — 3D Customizer
 
 A production-ready monogram 3D customizer built with React + Three.js (no react-three-fiber).
 Generates printable STL files from custom monogram letters and names.

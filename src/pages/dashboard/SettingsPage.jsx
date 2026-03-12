@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import styles from "./SettingsPage.module.css";
 
 const DEFAULT_SETTINGS = {
-  studioName: "Monogram Studio",
+  studioName: "3D•Print Studio",
   currency: "RON",
   lowStockThreshold: 100,
   energyCostPerHour: 0.8,
@@ -253,7 +253,7 @@ export function SettingsPage() {
                     className={styles.input}
                     value={settings.studioName}
                     onChange={(e) => setS("studioName")(e.target.value)}
-                    placeholder="Monogram Studio"
+                    placeholder="3D•Print Studio"
                   />
                 </Field>
                 <Field label="Monedă">

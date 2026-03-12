@@ -44,7 +44,7 @@ export function LoginPage() {
         <div className={styles.logo}>
           <span className={styles.logoMark}>M</span>
           <div>
-            <div className={styles.logoTitle}>Monogram Studio</div>
+            <div className={styles.logoTitle}>3D•Print Studio</div>
             <div className={styles.logoSub}>Intră în cont</div>
           </div>
         </div>
@@ -61,10 +61,10 @@ export function LoginPage() {
           </div>
 
           <div className={styles.field}>
-            <div className={styles.labelRow}>
+            {/* <div className={styles.labelRow}>
               <label className={styles.label}>Parolă</label>
               <Link to="/forgot-password" className={styles.forgotLink}>Ai uitat parola?</Link>
-            </div>
+            </div> */}
             <div className={styles.inputWrap}>
               <input className={styles.input} type={showPwd ? 'text' : 'password'}
                 value={password} onChange={e => setPassword(e.target.value)}

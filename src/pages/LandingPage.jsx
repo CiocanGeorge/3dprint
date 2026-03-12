@@ -96,7 +96,7 @@ export function LandingPage() {
             de imprimare 3D.
           </h1>
           <p style={{ ...s.heroDesc, opacity: heroIn ? 1 : 0, transform: heroIn ? 'none' : 'translateY(20px)', transition: 'all 0.65s ease 0.2s' }}>
-            Monogram Studio te ajută să gestionezi stocul de filamente, să urmărești imprimările,
+            3D•Print Studio te ajută să gestionezi stocul de filamente, să urmărești imprimările,
             să calculezi costuri corecte și să ții evidența comenzilor — totul într-un singur loc.
           </p>
           <div style={{ ...s.heroBtns, opacity: heroIn ? 1 : 0, transform: heroIn ? 'none' : 'translateY(16px)', transition: 'all 0.65s ease 0.3s' }}>
@@ -159,7 +159,7 @@ export function LandingPage() {
         <div style={s.footerInner}>
           <div style={s.footerLogo}>
             <span style={s.footerMark}>M</span>
-            <span style={s.footerBrand}>Monogram Studio</span>
+            <span style={s.footerBrand}>3D•Print Studio</span>
           </div>
           <p style={s.footerDesc}>
             Aplicație de management pentru studiouri de imprimare 3D.<br />
@@ -170,7 +170,7 @@ export function LandingPage() {
             <Link to="/register" style={s.footerLink}>Register</Link>
             <a href="mailto:contact@monogramstudio.ro" style={s.footerLink}>Contact</a>
           </div>
-          <p style={s.footerCopy}>© {new Date().getFullYear()} Monogram Studio. Toate drepturile rezervate.</p>
+          <p style={s.footerCopy}>© {new Date().getFullYear()} 3D•Print Studio. Toate drepturile rezervate.</p>
         </div>
       </footer>
     </div>
@@ -189,7 +189,7 @@ function Nav() {
       <div style={s.navInner}>
         <div style={s.navLogo}>
           <span style={s.navMark}>M</span>
-          <span style={s.navBrand}>Monogram Studio</span>
+          <span style={s.navBrand}>3D•Print Studio</span>
         </div>
         <div style={s.navLinks}>
           <Link to="/login" style={s.navLink}>Login</Link>

@@ -193,7 +193,7 @@ export function HomePage() {
         <div className={styles.navLogo}>
           <span className={styles.navLogoMark}>M</span>
           <div>
-            <div className={styles.navLogoTitle}>Monogram Studio</div>
+            <div className={styles.navLogoTitle}>3D•Print Studio</div>
             <div className={styles.navLogoSub}>3D Print Customizer</div>
           </div>
         </div>
@@ -262,7 +262,7 @@ export function HomePage() {
 
       {/* Footer */}
       <footer className={styles.footer}>
-        <span>Monogram Studio © 2025</span>
+        <span>3D•Print Studio © 2025</span>
         <span className={styles.footerDot}>·</span>
         <span>Export STL · FDM · SLA · SLS</span>
       </footer>

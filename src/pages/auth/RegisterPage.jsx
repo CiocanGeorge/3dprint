@@ -50,7 +50,7 @@ export function RegisterPage() {
         <div className={styles.logo}>
           <span className={styles.logoMark}>M</span>
           <div>
-            <div className={styles.logoTitle}>Monogram Studio</div>
+            <div className={styles.logoTitle}>3D•Print Studio</div>
             <div className={styles.logoSub}>Creează cont</div>
           </div>
         </div>

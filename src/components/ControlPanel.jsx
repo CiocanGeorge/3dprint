@@ -209,7 +209,7 @@ export function ControlPanel({ params, onChange, onExport }) {
       <div className={styles.header}>
         <span className={styles.logoMark}>M</span>
         <div>
-          <div className={styles.logoTitle}>Monogram Studio</div>
+          <div className={styles.logoTitle}>3D•Print Studio</div>
           <div className={styles.logoSub}>3D Customizer</div>
         </div>
       </div>
