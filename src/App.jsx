@@ -10,6 +10,7 @@ import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { DashboardPage } from './pages/DashboardPage';
 import LicensePlatePage from "./pages/LicensePlatePage";
 import { LandingPage } from "./pages/LandingPage";
+import { CalculatorPage } from "./pages/dashboard/CalculatorPage";
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();

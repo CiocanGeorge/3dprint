@@ -13,6 +13,7 @@ import styles from "./DashboardPage.module.css";
 import { PrintsPage } from "./dashboard/PrintsPage";
 import { OrdersPage } from "./dashboard/OrdersPage";
 import { SettingsPage } from "./dashboard/SettingsPage";
+import { CalculatorPage } from "./dashboard/CalculatorPage";
 
 // Icons
 const GridIcon = () => (
@@ -135,6 +136,11 @@ const NAV_ITEMS = [
     icon: <PrintIcon />,
   },
   { to: "/dashboard/orders", label: "Comenzi", icon: <BoxIcon /> },
+      {
+    to: "/dashboard/calculator",
+    label: "Calculator",
+    icon: <GearIcon />,
+  },
   {
     to: "/dashboard/settings",
     label: "Setări",
@@ -225,6 +231,7 @@ export function DashboardPage() {
           <Route path="filament" element={<FilamentPage />} />
           <Route path="prints" element={<PrintsPage title="Imprimări" />} />
           <Route path="orders" element={<OrdersPage title="Comenzi" />} />
+          <Route path="calculator" element={<CalculatorPage title="Calculator" />} />
           <Route path="settings" element={<SettingsPage title="Setări" />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
