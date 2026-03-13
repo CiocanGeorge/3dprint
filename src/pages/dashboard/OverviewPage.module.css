@@ -72,3 +72,69 @@
 .recentMeta { font-size: 10px; color: var(--text-muted); margin-top: 2px; display: block; }
 .recentBar { width: 80px; height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
 .recentBarFill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+
+/* ══════════════════════════════════════════════════════
+   TABLET  ≤ 900px
+══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .actions   { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ══════════════════════════════════════════════════════
+   MOBILE  ≤ 640px
+══════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* Layout */
+  .page { padding: 20px 16px 88px; /* bottom padding for bottom nav */ }
+
+  /* Header */
+  .title { font-size: 20px; }
+  .sub   { font-size: 12px; }
+
+  /* Stats: 2×2 on mobile */
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .statCard  { padding: 14px; }
+  .statIcon  { font-size: 18px; margin-bottom: 8px; }
+  .statValue { font-size: 22px; }
+
+  /* Actions: single column */
+  .actions { grid-template-columns: 1fr; gap: 10px; }
+  .actionCard { padding: 16px; }
+  .actionIcon  { font-size: 20px; margin-bottom: 8px; }
+
+  /* Alert banner: stack vertically */
+  .alertBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  .alertLink { margin-left: 0; }
+
+  /* Recent items: hide bar on very small screens, more padding */
+  .recentItem  { padding: 10px 12px; gap: 10px; }
+  .recentColor { width: 12px; height: 12px; }
+  .recentName  { font-size: 11px; }
+  .recentBar   { width: 60px; }
+
+  /* Section titles */
+  .sectionTitle { font-size: 14px; }
+  .section      { margin-bottom: 24px; }
+}
+
+/* ══════════════════════════════════════════════════════
+   XS  ≤ 380px  (small Android phones)
+══════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .page        { padding: 16px 12px 88px; }
+  .statsGrid   { gap: 8px; }
+  .statCard    { padding: 12px; }
+  .statValue   { font-size: 20px; }
+  .recentBar   { display: none; }
+}
