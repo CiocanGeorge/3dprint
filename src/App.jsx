@@ -11,6 +11,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import LicensePlatePage from "./pages/LicensePlatePage";
 import { LandingPage } from "./pages/LandingPage";
 import { CalculatorPage } from "./pages/dashboard/CalculatorPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -84,6 +85,7 @@ function Routes_() {
           </PrivateRoute>
         }
       />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
     </Routes>
   );
 }

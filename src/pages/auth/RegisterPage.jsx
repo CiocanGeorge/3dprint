@@ -25,7 +25,7 @@ export function RegisterPage() {
     setLoading(true);
     try {
       await register({ email, password, name });
-      navigate("/"); // merge direct dacă "Confirm email" e OFF în Supabase
+      navigate("/verify-email"); // merge direct dacă "Confirm email" e OFF în Supabase
     } catch (err) {
       setError(err.message);
     } finally {
