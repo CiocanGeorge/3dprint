@@ -103,6 +103,12 @@ function Nav({ width }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const mob = width < 640;
 
+  const menuItems = [
+    { label: "Features", href: "#features" },
+    { label: "Prețuri", href: "#pricing" },
+    { label: "Login", href: "/login" },
+  ];
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", fn);
@@ -232,11 +238,11 @@ function Nav({ width }) {
             gap: 4,
           }}
         >
-          {/* {['Features', 'Prețuri', 'Login'].map(item => ( */}
-          {["Features", "Login"].map((item) => (
+          {/* {['Features', '', 'Login'].map(item => ( */}
+          {menuItems.map((item) => (
             <a
-              key={item}
-              href="#"
+              key={item.label}
+              href={item.href}
               onClick={() => setMenuOpen(false)}
               style={{
                 fontSize: 15,
@@ -246,12 +252,12 @@ function Nav({ width }) {
                 fontWeight: 500,
               }}
             >
-              {item}
+              {item.label}
             </a>
           ))}
           <div style={{ padding: "8px 20px 0" }}>
             <a
-              href="#"
+              href="/register"
               style={{
                 display: "block",
                 textAlign: "center",
