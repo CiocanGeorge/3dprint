@@ -105,7 +105,7 @@ function Nav({ width }) {
 
   const menuItems = [
     { label: "Features", href: "#features" },
-    { label: "Prețuri", href: "#pricing" },
+    // { label: "Prețuri", href: "#pricing" },
     { label: "Login", href: "/login" },
   ];
 
