@@ -452,7 +452,6 @@ function Hero({ width }) {
           />
           Construit pentru maker-i din România
         </div>
-
         <h1
           style={{
             fontSize: mob ? 36 : "clamp(38px,5vw,60px)",
