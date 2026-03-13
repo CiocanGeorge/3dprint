@@ -1,13 +1,12 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import { HomePage } from "./pages/HomePage";
 import { CustomizerPage } from "./pages/CustomizerPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { RegisterPage } from "./pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
-import { DashboardPage } from './pages/DashboardPage';
+import { DashboardPage } from "./pages/DashboardPage";
 import LicensePlatePage from "./pages/LicensePlatePage";
 import { LandingPage } from "./pages/LandingPage";
 
@@ -94,9 +93,7 @@ function Routes_() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes_ />
-      </BrowserRouter>
+      <Routes_ />
     </AuthProvider>
   );
 }
