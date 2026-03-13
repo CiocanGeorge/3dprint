@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { HomePage } from "./pages/HomePage";
 import { CustomizerPage } from "./pages/CustomizerPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { LoginPage } from "./pages/auth/LoginPage";
@@ -9,20 +10,17 @@ import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import LicensePlatePage from "./pages/LicensePlatePage";
 import { LandingPage } from "./pages/LandingPage";
+import { CalculatorPage } from "./pages/dashboard/CalculatorPage";
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
-
-  if (loading) return <div>Loading...</div>; // fallback vizual
-
+  if (loading) return null;
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
 function GuestRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
-
-  if (loading) return <div>Loading...</div>;
-
+  if (loading) return null;
   return !isAuthenticated ? children : <Navigate to="/dashboard" replace />;
 }
 
