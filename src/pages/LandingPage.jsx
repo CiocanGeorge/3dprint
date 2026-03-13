@@ -490,7 +490,7 @@ function Hero({ width }) {
           style={{ display: "flex", gap: 12, flexWrap: "wrap", ...trans(0.3) }}
         >
           <a
-            href="#"
+            href="/register"
             style={{
               background: "#0f172a",
               color: "#fff",
@@ -504,7 +504,7 @@ function Hero({ width }) {
             Începe gratuit →
           </a>
           <a
-            href="#"
+            href="/login"
             style={{
               background: "transparent",
               color: "#0f172a",
